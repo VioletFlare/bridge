@@ -1,0 +1,13 @@
+{
+  "name": "bridge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bridge.js",
+  "scripts": {
+    "start": "node bridge.js",
+    "dev": "node bridge.js --dev",
+    "clean": "npm cache clean --force"
+  },
+  "author": "",
+  "license": "ISC"
+}
