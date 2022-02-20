@@ -9,5 +9,9 @@
     "clean": "npm cache clean --force"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "mysql2": "^2.3.3"
+  }
 }
