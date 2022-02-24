@@ -22,6 +22,10 @@ class InstanceManager {
         if (bridge) {
             bridge.onMessageCreate(msg)
         }
+
+        this.sessions.forEach(
+            bridge => bridge.sendMessage(msg)
+        )
     }
 
     _initSessions() {

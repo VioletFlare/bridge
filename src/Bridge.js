@@ -5,20 +5,33 @@ class Bridge {
         this.guild = guild;
         this.DAL = DAL;
         this.configuration = {};
+        this.channel = null;
     }
 
     init() {
         this.DAL.insertGuild(this.guild.id, this.guild.name);
         this.DAL.getConfiguration(this.guild.id).then(config => {
             if (config) {
+              this.configuration.channel_id = config.channel_id;
+              this.configuration.channel_name = config.channel_name;
+              this.configuration.guild_id = config.guild_id;
 
+              this.channel = this.guild.channels.cache.find(channel => channel.name === config.channel_name);
             }
         });
     }
 
-    _configure(channelName) {
-      const matchingChannel = this.guild.channels.cache.find(channel => channel.name === channelName);
-      this.DAL.updateConfiguration(matchingChannel);
+    _configure(msg, channelName) {
+      this.channel = this.guild.channels.cache.find(channel => channel.name === channelName);
+      const shouldModifyConfiguration = msg.member.permissionsIn(msg.channel).has("ADMINISTRATOR") && this.channel;
+
+      if (shouldModifyConfiguration) {
+        this.configuration.channel_id = this.channel.id;
+        this.configuration.channel_name = this.channel.name;
+        this.configuration.guild_id = this.channel.guildId;
+  
+        this.DAL.updateConfiguration(this.channel);
+      }
     }
 
     _splitCommand(msg) {
@@ -41,14 +54,40 @@ class Bridge {
     
           switch (command) {
             case "configure":
-              this._configure(splittedCommand[1]);
+              this._configure(msg, splittedCommand[1]);
             break;
           }
         }
       }
 
     onMessageCreate(msg) {
-        this._parseCommand(msg);
+      this._parseCommand(msg);
+    }
+
+    sendMessage(msg) {
+      const shouldSendMessage = this.channel && this.guild.id != msg.guildId && !msg.author.bot;
+
+      if (shouldSendMessage) {
+        let username;
+
+        if (msg.member.nickname) {
+          username = msg.member.nickname;
+        } else {
+          username = msg.member.user.username;
+        }
+
+        let content = "";
+
+        if (msg.attachments.size) {
+          msg.attachments.forEach(attachment => {
+            content += attachment.url + " ";
+          })
+        } else {
+          content = msg.content;
+        }
+
+        this.channel.send(`[${username}@${msg.guild.name}]: ${content}`)
+      }
     }
 }
 
