@@ -86,7 +86,9 @@ class Bridge {
           content = msg.content;
         }
 
-        this.channel.send(`[${username}@${msg.guild.name}]: ${content}`)
+        this.channel.send(`[${username}@${msg.guild.name}]: ${content}`).catch(
+          error => console.error(error)
+        )
       }
     }
 }
