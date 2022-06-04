@@ -1,7 +1,8 @@
-const Bridge = require('./Bridge.js');
+const Instance = require('./Instance.js');
 const config = require('../config.js');
 const Discord = require("discord.js");
 const DAL = require("./DAL/DataLayer.js");
+const WordFilter = require("./WordFilter.js");
 
 class InstanceManager {
     
@@ -13,35 +14,38 @@ class InstanceManager {
         });
 
         this.sessions = new Map();
+        this.wordFilter = new WordFilter();
     }
 
     _onMessageCreate(msg) {
         const guildId = msg.guild.id;
-        const bridge = this.sessions.get(guildId);
+        const instance = this.sessions.get(guildId);
         
-        if (bridge) {
-            bridge.onMessageCreate(msg)
+        msg.content = this.wordFilter.filter(msg.content);
+
+        if (instance) {
+            instance.onMessageCreate(msg)
         }
 
         this.sessions.forEach(
-            bridge => bridge.sendMessage(msg)
+            instance => instance.sendMessage(msg)
         )
     }
 
     _initSessions() {
         if (!this.sessions.size) {
             for (const [guildId, guild] of this.client.guilds.cache.entries()) {
-                const bridge = new Bridge(guild, DAL);
-                bridge.init();
-                this.sessions.set(guildId, bridge);
+                const instance = new Instance(guild, DAL);
+                instance.init();
+                this.sessions.set(guildId, instance);
             }
         }
     }
 
     _initSession(guild) {
-        const bridge = new Bridge(guild, DAL);
-        bridge.init();
-        this.sessions.set(guild.id, bridge);
+        const instance = new Instance(guild, DAL);
+        instance.init();
+        this.sessions.set(guild.id, instance);
     }
 
     _setEvents() {
@@ -60,6 +64,10 @@ class InstanceManager {
         );
     }
 
+    _setup() {
+        this.wordFilter.init();
+    }
+
     init() {
         if (this.isDev) {
             this.client.login(config.TOKEN_DEV);
@@ -67,6 +75,7 @@ class InstanceManager {
             this.client.login(config.TOKEN_PROD);
         }
 
+        this._setup();
         this._setEvents();
     }
 

@@ -1,4 +1,4 @@
-class Bridge {
+class Instance {
 
     constructor(guild, DAL) {
         this.prefix = "br";
@@ -16,7 +16,13 @@ class Bridge {
               this.configuration.channel_name = config.channel_name;
               this.configuration.guild_id = config.guild_id;
 
-              this.channel = this.guild.channels.cache.find(channel => channel.name === config.channel_name);
+              this.channel = this.guild.channels.cache.find(
+                channel => {
+                  const isCorrectChannel = channel.name === config.channel_name && channel.type === "GUILD_TEXT"
+
+                  return isCorrectChannel;
+                }
+              );
             }
         });
     }
@@ -93,4 +99,4 @@ class Bridge {
     }
 }
 
-module.exports = Bridge;
+module.exports = Instance;
