@@ -28,7 +28,9 @@ class Instance {
     }
 
     _configure(msg, channelName) {
-      this.channel = this.guild.channels.cache.find(channel => channel.name === channelName);
+      this.channel = this.guild.channels.cache.find(
+        channel => channel.name === channelName && channel.type === "GUILD_TEXT"
+      );
       const shouldModifyConfiguration = msg.member.permissionsIn(msg.channel).has("ADMINISTRATOR") && this.channel;
 
       if (shouldModifyConfiguration) {

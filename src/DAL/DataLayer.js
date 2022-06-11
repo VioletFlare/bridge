@@ -78,6 +78,31 @@ class DataLayer {
         );
     }
 
+    getAllowedChannels() {
+        return new Promise(
+            (resolve, reject) => {
+                DB.getConnection((err, connection) => {
+                    if (err) throw err;
+        
+                    const query = `
+                        SELECT channel_id FROM bridge_configs;
+                    `
+        
+                    connection.query(query, (error, results, fields) => {
+                        if (error) throw error;
+                        connection.release();
+
+                        if (results === undefined) {
+                            reject(new Error("Results is undefined."))
+                        } else {
+                            resolve(results);
+                        }
+                    });
+                });
+            }
+        );
+    }
+
 }
 
 module.exports = new DataLayer();

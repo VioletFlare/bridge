@@ -15,21 +15,25 @@ class InstanceManager {
 
         this.sessions = new Map();
         this.wordFilter = new WordFilter();
+        this.allowedChannelIds = {};
     }
 
     _onMessageCreate(msg) {
         const guildId = msg.guild.id;
         const instance = this.sessions.get(guildId);
-        
+        const isChannelReadAllowed = this.allowedChannelIds[msg.channelId];
+
         msg.content = this.wordFilter.filter(msg.content);
 
         if (instance) {
             instance.onMessageCreate(msg)
         }
 
-        this.sessions.forEach(
-            instance => instance.sendMessage(msg)
-        )
+        if (isChannelReadAllowed) {
+            this.sessions.forEach(
+                instance => instance.sendMessage(msg)
+            )
+        }
     }
 
     _initSessions() {
@@ -64,8 +68,21 @@ class InstanceManager {
         );
     }
 
+    _initAllowedChannelIds() {
+        DAL.getAllowedChannels().then(allowedChannels => {
+            allowedChannels.forEach(
+                allowedChannel => {
+                    const channelId = allowedChannel.channel_id;
+
+                    this.allowedChannelIds[channelId] = true;
+                } 
+            )
+        });
+    }
+
     _setup() {
         this.wordFilter.init();
+        this._initAllowedChannelIds();
     }
 
     init() {
