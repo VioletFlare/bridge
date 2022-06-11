@@ -70,31 +70,82 @@ class Instance {
       this._parseCommand(msg);
     }
 
+    _getReplyMessageContent(referencedMessage, msg) {
+      const referencedMessageWithNewline = `\n${referencedMessage.content}`;
+      const transformedReferncedMessage = referencedMessageWithNewline.replaceAll("\n>", "\n>   ")
+      const matchNewlineWithoutQuote = /\n(?!>)/g;
+      const quotedReferencedMessage = transformedReferncedMessage.replaceAll(matchNewlineWithoutQuote, "\n> ");
+      const replyMessage = `${quotedReferencedMessage}\n${msg.content}`;
+
+      return replyMessage;
+    }
+
+    _getTextualContent(msg) {
+      return new Promise(resolve => {
+        if (msg.type === "REPLY") {
+          msg.channel.messages
+            .fetch(msg.reference.messageId)
+            .then(
+              referencedMessage => {
+                const replyMessage = this._getReplyMessageContent(referencedMessage, msg);
+
+                resolve(replyMessage)
+              }
+            ).catch(
+              () => resolve("")
+            )
+        } else {
+          resolve(msg.content);
+        }
+      });
+    }
+
+    _getMessageContent(msg) {
+      return new Promise(resolve => {
+        if (msg.attachments.size) {
+          let content = "";
+
+          msg.attachments.forEach(attachment => {
+            content += attachment.url + " ";
+          })
+
+          resolve(content);
+        } else {
+          this._getTextualContent(msg).then(
+            content => resolve(content)
+          );
+        }
+      });
+    }
+
+    _getMessageRepresentation(msg, content) {
+      let username;
+
+      if (msg.member.nickname) {
+        username = msg.member.nickname;
+      } else {
+        username = msg.member.user.username;
+      }
+
+      const messageRepresentation = 
+        `[${username}@${msg.guild.name}]: ${content}`;
+
+      return messageRepresentation;
+    }
+
     sendMessage(msg) {
       const shouldSendMessage = this.channel && this.guild.id != msg.guildId && !msg.author.bot;
 
       if (shouldSendMessage) {
-        let username;
+        this._getMessageContent(msg).then(content => {
+          const messageRepresentation = this._getMessageRepresentation(msg, content);
 
-        if (msg.member.nickname) {
-          username = msg.member.nickname;
-        } else {
-          username = msg.member.user.username;
-        }
-
-        let content = "";
-
-        if (msg.attachments.size) {
-          msg.attachments.forEach(attachment => {
-            content += attachment.url + " ";
-          })
-        } else {
-          content = msg.content;
-        }
-
-        this.channel.send(`[${username}@${msg.guild.name}]: ${content}`).catch(
-          error => console.error(error)
-        )
+          this.channel
+            .send(messageRepresentation)
+            .catch(
+              error => console.error(error)
+            )
+        });
       }
     }
 }
