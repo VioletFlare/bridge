@@ -2,7 +2,8 @@ const Instance = require('./Instance.js');
 const config = require('../config.js');
 const Discord = require("discord.js");
 const DAL = require("./DAL/DataLayer.js");
-const WordFilter = require("./WordFilter.js");
+const WordFilter = require("./Services/WordFilter.js");
+const ConsoleConnector = require('./Services/ConsoleConnector.js');
 
 class InstanceManager {
     
@@ -15,6 +16,7 @@ class InstanceManager {
 
         this.sessions = new Map();
         this.wordFilter = new WordFilter();
+        this.consoleConnector = new ConsoleConnector(config);
         this.allowedChannelIds = {};
     }
 
@@ -83,6 +85,7 @@ class InstanceManager {
     _setup() {
         this.wordFilter.init();
         this._initAllowedChannelIds();
+        this.consoleConnector.init();
     }
 
     init() {
