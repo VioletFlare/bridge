@@ -17,13 +17,27 @@ class ConsoleConnector {
         });
 
         this.ws.on('open', () => {
+            this.ws.send(JSON.stringify(
+                {
+                    route: "/auth",
+                    clientType: "Bot"
+                }
+            ))
+
             console.info("Connection established with Console Service!")
 
             this.ws.on(
                 "message", (data) => {
-                    const route = data.toString('utf8');
-                    const response = this.controller.callRoute(route);
-                    this.ws.send(response);
+                    const jsonString = data.toString('utf8');
+                    const object = JSON.parse(jsonString);
+
+                    const isEmpty = Object.keys(object).length === 0;
+
+                    if (!isEmpty) {
+                        const route = object.route;
+                        const response = this.controller.callRoute(route);
+                        this.ws.send(response);
+                    }
                 }
             )
         });
