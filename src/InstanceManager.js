@@ -3,7 +3,7 @@ const config = require('../config.js');
 const Discord = require("discord.js");
 const DAL = require("./DAL/DataLayer.js");
 const WordFilter = require("./Services/WordFilter.js");
-const ConsoleConnector = require('./Services/ConsoleConnector.js');
+const ConsoleConnector = require('./Services/ConsoleConnector/ConsoleConnector.js');
 
 class InstanceManager {
     
@@ -85,7 +85,7 @@ class InstanceManager {
     _setup() {
         this.wordFilter.init();
         this._initAllowedChannelIds();
-        this.consoleConnector.init();
+        this.consoleConnector.init(this.sessions);
     }
 
     init() {

@@ -1,8 +1,10 @@
 const WebSocket = require('ws');
+const Controller = require('./Controller.js');
 
 class ConsoleConnector {
     constructor(config) {
         this.config = config;
+        this.controller = new Controller(config);
     }
 
     _setEvents() {
@@ -17,7 +19,13 @@ class ConsoleConnector {
         this.ws.on('open', () => {
             console.info("Connection established with Console Service!")
 
-            this.ws.send('something');
+            this.ws.on(
+                "message", (data) => {
+                    const route = data.toString('utf8');
+                    const response = this.controller.callRoute(route);
+                    this.ws.send(response);
+                }
+            )
         });
     }
 
@@ -30,9 +38,11 @@ class ConsoleConnector {
         );
     }
 
-    init() {
+    init(sessions) {
         this._setup();
         this._setEvents();
+
+        this.controller.init(sessions);
     }   
 }
 
