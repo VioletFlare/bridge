@@ -59,6 +59,8 @@ class InstanceManager {
             console.log(`Logged in as ${this.client.user.tag}, id ${this.client.user.id}!`);
             
             this._initSessions();
+            
+            this.consoleConnector.init(this.sessions);
         });
           
         this.client.on(
@@ -85,7 +87,6 @@ class InstanceManager {
     _setup() {
         this.wordFilter.init();
         this._initAllowedChannelIds();
-        this.consoleConnector.init(this.sessions);
     }
 
     init() {

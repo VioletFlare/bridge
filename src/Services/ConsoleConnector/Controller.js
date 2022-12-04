@@ -5,13 +5,22 @@ class Controller {
     }
 
     _getGuilds() {
+        const guilds = [];
+
         this.sessions.forEach(
             instance => {
-                console.log(instance);
+                guilds.push({
+                    name: instance.guild.name,
+                    id: instance.guild.id
+                })
             }
         )
-
-        JSON.stringify();
+        
+        const json = {
+            guilds: guilds
+        }
+        
+        const response = JSON.stringify(json);
 
         return response;
     }
