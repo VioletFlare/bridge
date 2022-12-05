@@ -20,7 +20,7 @@ class ConsoleConnector {
             this.ws.send(JSON.stringify(
                 {
                     route: "/auth",
-                    clientType: "Bot"
+                    userAgent: "Bot"
                 }
             ))
 
@@ -34,9 +34,13 @@ class ConsoleConnector {
                     const isEmpty = Object.keys(object).length === 0;
 
                     if (!isEmpty) {
-                        const route = object.route;
-                        const response = this.controller.callRoute(route);
-                        this.ws.send(response);
+                        const isRequest = object.route;
+
+                        if (isRequest) {
+                            const route = object.route;
+                            const response = this.controller.callRoute(route);
+                            this.ws.send(response);
+                        }
                     }
                 }
             )
