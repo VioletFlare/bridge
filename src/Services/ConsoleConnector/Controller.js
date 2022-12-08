@@ -25,7 +25,7 @@ class Controller {
         return response;
     }
 
-    callRoute(route) {
+    callRoute(route, data) {
         let response = "{}";
 
         switch(route) {

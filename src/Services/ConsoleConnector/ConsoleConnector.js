@@ -1,10 +1,46 @@
 const WebSocket = require('ws');
 const Controller = require('./Controller.js');
+const Requester = require('./Requester.js');
 
 class ConsoleConnector {
     constructor(config) {
         this.config = config;
         this.controller = new Controller(config);
+        this.Requester = new Requester();
+    }
+
+    _sendRequest(route, data = {}) {
+        const request = Requester.createRequest(route, data);
+
+        this.ws.send(JSON.stringify(
+            request
+        ));
+    }
+
+    _authenticate() {
+        this._sendRequest('/auth', {});
+    }
+
+    _setMessageHandler() {
+        this.ws.on(
+            "message", (data) => {
+                const jsonString = data.toString('utf8');
+                const object = JSON.parse(jsonString);
+
+                const isEmpty = Object.keys(object).length === 0;
+
+                if (!isEmpty) {
+                    const isRequest = object.route;
+
+                    if (isRequest) {
+                        const route = object.route;
+                        const data = object.data;
+                        const response = this.controller.callRoute(route, data);
+                        this.ws.send(response);
+                    }
+                }
+            }
+        )
     }
 
     _setEvents() {
@@ -17,33 +53,9 @@ class ConsoleConnector {
         });
 
         this.ws.on('open', () => {
-            this.ws.send(JSON.stringify(
-                {
-                    route: "/auth",
-                    userAgent: "Bot"
-                }
-            ))
-
-            console.info("Connection established with Console Service!")
-
-            this.ws.on(
-                "message", (data) => {
-                    const jsonString = data.toString('utf8');
-                    const object = JSON.parse(jsonString);
-
-                    const isEmpty = Object.keys(object).length === 0;
-
-                    if (!isEmpty) {
-                        const isRequest = object.route;
-
-                        if (isRequest) {
-                            const route = object.route;
-                            const response = this.controller.callRoute(route);
-                            this.ws.send(response);
-                        }
-                    }
-                }
-            )
+            console.info("Connection established with Console Service!");
+            this._authenticate();
+            this._setMessageHandler();
         });
     }
 
