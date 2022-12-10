@@ -6,11 +6,11 @@ class ConsoleConnector {
     constructor(config) {
         this.config = config;
         this.controller = new Controller(config);
-        this.Requester = new Requester();
+        this.requester = new Requester();
     }
 
     _sendRequest(route, data = {}) {
-        const request = Requester.createRequest(route, data);
+        const request = this.requester.createRequest(route, data);
 
         this.ws.send(JSON.stringify(
             request

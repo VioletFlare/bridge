@@ -16,17 +16,15 @@ class Controller {
             }
         )
         
-        const json = {
+        const response = {
             guilds: guilds
         }
         
-        const response = JSON.stringify(json);
-
         return response;
     }
 
     callRoute(route, data) {
-        let response = "{}";
+        let response = {};
 
         switch(route) {
             case "/guilds":
@@ -34,7 +32,11 @@ class Controller {
             break;
         }
 
-        return response;
+        response.calledRoute = route;
+
+        const responseString = JSON.stringify(response);
+        
+        return responseString;
     }
 
     init(sessions) {
