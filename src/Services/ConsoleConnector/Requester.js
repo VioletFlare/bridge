@@ -1,7 +1,9 @@
+const auxConfig = require("../../AuxConfig.js");
+
 class Requester {
 
     constructor(config) {
-        this.userAgent = "Bot::Bridge";
+        this.userAgent = auxConfig.USER_AGENT;
     }
 
     createRequest(route, data = {}) {

@@ -1,7 +1,10 @@
+const auxConfig = require("../../AuxConfig.js");
+
 class Controller {
 
     constructor(config) {
         this.config = config;
+        this.userAgent = auxConfig.USER_AGENT;
     }
 
     _getGuilds() {
@@ -34,6 +37,7 @@ class Controller {
         }
 
         response.data = baseResponse;
+        response.data.userAgent = this.userAgent;
         response.calledRoute = route;
 
         const responseString = JSON.stringify(response);
