@@ -25,13 +25,15 @@ class Controller {
 
     callRoute(route, data) {
         let response = {};
+        let baseResponse;
 
         switch(route) {
             case "/guilds":
-                response = this._getGuilds();
+                baseResponse = this._getGuilds();
             break;
         }
 
+        response.data = baseResponse;
         response.calledRoute = route;
 
         const responseString = JSON.stringify(response);
