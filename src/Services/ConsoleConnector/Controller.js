@@ -2,8 +2,7 @@ const auxConfig = require("../../AuxConfig.js");
 
 class Controller {
 
-    constructor(config) {
-        this.config = config;
+    constructor() {
         this.userAgent = auxConfig.USER_AGENT;
     }
 

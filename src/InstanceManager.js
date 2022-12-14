@@ -16,7 +16,7 @@ class InstanceManager {
 
         this.sessions = new Map();
         this.wordFilter = new WordFilter();
-        this.consoleConnector = new ConsoleConnector(config);
+        this.consoleConnector = new ConsoleConnector(config, this.sessions);
         this.allowedChannelIds = {};
     }
 
