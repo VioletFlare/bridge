@@ -43,7 +43,9 @@ class Instance {
     }
 
     _authenticate() {
-        this._sendRequest('/auth', {});
+        this._sendRequest('/auth', {}).then(response => {
+            this.sessionCache.serverInfo.userAgent = "";
+        });
     }
 
     _listenForRequests() {
