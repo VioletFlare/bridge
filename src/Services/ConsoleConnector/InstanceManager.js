@@ -2,9 +2,9 @@ const Instance = require('./Instance.js');
 const WebSocket = require('ws');
 
 class InstanceManager {
-    constructor(config, sessions) {
+    constructor(config, discordSessions) {
         this.config = config;
-        this.sessions = sessions;
+        this.discordSessions = discordSessions;
     }
 
     _handleError() {
@@ -21,7 +21,7 @@ class InstanceManager {
         );
 
         this.ws.on(
-            'open', () => new Instance(this.ws, this.sessions).init()
+            'open', () => new Instance(this.ws, this.discordSessions).init()
         );
     }
 
@@ -34,7 +34,7 @@ class InstanceManager {
         );
     }
 
-    init(sessions) {
+    init() {
         this._setup();
         this._setEvents();
     }   

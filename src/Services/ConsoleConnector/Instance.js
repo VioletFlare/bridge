@@ -1,10 +1,12 @@
 const Controller = require('./Controller.js');
 const Requester = require('./Requester.js');
+const SessionCache = require('./SessionCache.js');
 
 class Instance {
-    constructor(ws, sessions) {
+    constructor(ws, discordSessions) {
         this.ws = ws;
-        this.sessions = sessions;
+        this.discordSessions = discordSessions;
+        this.sessionCache = new SessionCache();
         this.controller = new Controller();
         this.requester = new Requester();
     }
@@ -70,7 +72,7 @@ class Instance {
         console.info("Connection established with Console Service!");
 
         this._authenticate();   
-        this.controller.init(this.sessions);
+        this.controller.init(this.discordSessions);
     }
 }
 
