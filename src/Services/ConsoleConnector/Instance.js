@@ -13,6 +13,7 @@ class Instance {
 
     _authenticate() {
         this.client.sendRequest('/auth', {}).then(response => {
+            console.log(response);
             this.sessionCache.serverInfo.userAgent = "";
         });
     }
