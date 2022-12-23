@@ -1,4 +1,4 @@
-const SessionCache = require('./SessionCache.js');
+const SessionCache = require('./Common/SessionCache.js');
 const Server = require("./Server/Server.js");
 const Client = require("./Client/Client.js");
 
