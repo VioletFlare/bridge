@@ -1,9 +1,17 @@
+const auxConfig = require("../../../AuxConfig.js");
 const Controller = require("./Controller.js");
 
 class Server {
     constructor(ws, discordSessions) {
         this.ws = ws;
         this.controller = new Controller(this.cache, discordSessions);
+        this.userAgent = auxConfig.USER_AGENT;
+    }
+
+    _enrichWithOverhead(response) {
+        response.data.userAgent = this.userAgent;
+
+        return response;
     }
 
     _listenForRequests() {
@@ -19,8 +27,12 @@ class Server {
                 if (isRequest) {
                     const route = json.route;
                     const data = json.data;
-                    const response = this.controller.callRoute(route, data);
-                    this.ws.send(response);
+                    
+                    let response = this.controller.callRoute(route, data);
+                    response = this._enrichWithOverhead(response)
+
+                    const responseString = JSON.stringify(response);
+                    this.ws.send(responseString);
                 }
             }
         });

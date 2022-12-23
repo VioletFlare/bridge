@@ -1,9 +1,6 @@
-const auxConfig = require("../../../AuxConfig.js");
-
 class Controller {
 
     constructor(cache, sessions) {
-        this.userAgent = auxConfig.USER_AGENT;
         this.sessions = sessions;
     }
 
@@ -35,14 +32,11 @@ class Controller {
                 baseResponse = this._getGuilds();
             break;
         }
-
-        response.data = baseResponse;
-        response.data.userAgent = this.userAgent;
-        response.calledRoute = route;
-
-        const responseString = JSON.stringify(response);
         
-        return responseString;
+        response.data = baseResponse;
+        response.calledRoute = route;
+        
+        return response;
     }
 
 }
