@@ -11,20 +11,10 @@ class Instance {
         this.server = new Server(this.ws, this.discordSessions);
     }
 
-    _authenticate() {
-        this.client.sendRequest('/auth', {}).then(response => {
-            console.log(response);
-            this.sessionCache.serverInfo.userAgent = "";
-        });
-    }
-
-
     init() {
         this.server.init();
     
         console.info("Connection established with Console Service!");
-
-        this._authenticate();
     }
 }
 
