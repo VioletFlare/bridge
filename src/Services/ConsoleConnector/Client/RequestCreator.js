@@ -1,6 +1,6 @@
-const auxConfig = require("../../AuxConfig.js");
+const auxConfig = require("../../../AuxConfig.js");
 
-class Requester {
+class RequestCreator {
 
     constructor(config) {
         this.userAgent = auxConfig.USER_AGENT;
@@ -20,4 +20,4 @@ class Requester {
 
 }
 
-module.exports = Requester;
+module.exports = RequestCreator;
