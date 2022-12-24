@@ -9,7 +9,7 @@ class Server {
     }
 
     _enrichWithOverhead(response) {
-        response.data.userAgent = this.userAgent;
+        response.userAgent = this.userAgent;
 
         return response;
     }
