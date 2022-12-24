@@ -30,6 +30,7 @@ class Server {
                     
                     let response = this.controller.callRoute(route, data);
                     response = this._enrichWithOverhead(response)
+                    response.calledRoute = route;
 
                     const responseString = JSON.stringify(response);
                     this.ws.send(responseString);
