@@ -4,7 +4,7 @@ const path = require('path');
 class WordFilter {
 
     constructor() {
-        this.badWordsPath = path.join(__dirname, '..', 'bad_words.txt');
+        this.badWordsPath = path.join(__dirname, '..', '..', 'bad_words.txt');
         this.badWords = [];
     }
 

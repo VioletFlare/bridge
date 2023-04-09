@@ -6,11 +6,13 @@
   "scripts": {
     "start": "node bridge.js",
     "dev": "node bridge.js --dev",
-    "clean": "npm cache clean --force"
+    "clean": "npm cache clean --force",
+    "postinstall": "npm update console-connector"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "console-connector": "github:VioletFlare/console-connector#master",
     "discord.js": "^13.6.0",
     "mysql2": "^2.3.3"
   }
