@@ -3,7 +3,7 @@ const config = require('../config.js');
 const Discord = require("discord.js");
 const DAL = require("./DAL/DataLayer.js");
 const WordFilter = require("./Services/WordFilter.js");
-const ConsoleConnector = require('./Services/ConsoleConnector/ConsoleConnector.js');
+const ConsoleController = require('./Services/ConsoleController.js');
 
 class InstanceManager {
     
@@ -16,8 +16,8 @@ class InstanceManager {
 
         this.sessions = new Map();
         this.wordFilter = new WordFilter();
-        this.consoleConnector = new ConsoleConnector(config, this.sessions);
         this.allowedChannelIds = {};
+        this.consoleController = new ConsoleController(config, this.sessions);
     }
 
     _onMessageCreate(msg) {
@@ -59,8 +59,7 @@ class InstanceManager {
             console.log(`Logged in as ${this.client.user.tag}, id ${this.client.user.id}!`);
             
             this._initSessions();
-            
-            this.consoleConnector.init(this.sessions);
+            this.consoleController.init();
         });
           
         this.client.on(
