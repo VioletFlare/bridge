@@ -16,14 +16,16 @@ class InstanceManager {
 
         this.sessions = new Map();
         this.wordFilter = new WordFilter();
-        this.allowedChannelIds = {};
+        this.cache = {
+            allowedChannelIds: {}
+        };
         this.consoleController = new ConsoleController(config, this.sessions);
     }
 
     _onMessageCreate(msg) {
         const guildId = msg.guild.id;
         const instance = this.sessions.get(guildId);
-        const isChannelReadAllowed = this.allowedChannelIds[msg.channelId];
+        const isChannelReadAllowed = this.cache.allowedChannelIds[msg.channelId];
 
         msg.content = this.wordFilter.filter(msg.content);
 
@@ -41,7 +43,7 @@ class InstanceManager {
     _initSessions() {
         if (!this.sessions.size) {
             for (const [guildId, guild] of this.client.guilds.cache.entries()) {
-                const instance = new Instance(guild, DAL);
+                const instance = new Instance(this.cache, guild, DAL);
                 instance.init();
                 this.sessions.set(guildId, instance);
             }
@@ -49,7 +51,7 @@ class InstanceManager {
     }
 
     _initSession(guild) {
-        const instance = new Instance(guild, DAL);
+        const instance = new Instance(this.cache, guild, DAL);
         instance.init();
         this.sessions.set(guild.id, instance);
     }
@@ -77,7 +79,7 @@ class InstanceManager {
                 allowedChannel => {
                     const channelId = allowedChannel.channel_id;
 
-                    this.allowedChannelIds[channelId] = true;
+                    this.cache.allowedChannelIds[channelId] = true;
                 } 
             )
         });

@@ -1,11 +1,12 @@
 class Instance {
 
-    constructor(guild, DAL) {
+    constructor(cache, guild, DAL) {
         this.prefix = "br";
         this.guild = guild;
         this.DAL = DAL;
         this.configuration = {};
         this.channel = null;
+        this.cache = cache;
     }
 
     init() {
@@ -37,6 +38,8 @@ class Instance {
         this.configuration.channel_id = this.channel.id;
         this.configuration.channel_name = this.channel.name;
         this.configuration.guild_id = this.channel.guildId;
+
+        this.cache.allowedChannelIds[this.channel.id] = true;
   
         this.DAL.updateConfiguration(this.channel);
       }

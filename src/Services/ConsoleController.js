@@ -24,7 +24,11 @@ class ConsoleController {
                 instance => {
                     guilds.push({
                         name: instance.guild.name,
-                        id: instance.guild.id
+                        id: instance.guild.id,
+                        channel: {
+                            name: instance.channel.name,
+                            id: instance.channel.id
+                        }
                     })
                 }
             )
