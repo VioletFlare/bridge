@@ -5,13 +5,15 @@ class WordFilter {
 
     constructor() {
         this.badWordsPath = path.join(__dirname, '..', '..', 'static', 'bad_words.txt');
+        this.badWordsExactPath = path.join(__dirname, '..', '..', 'static', 'bad_words_exact.txt');
         this.badWords = [];
+        this.badWordsExact = [];
     }
 
-    _getBadWords() {
+    _getBadWords(path) {
         return new Promise(
             (resolve, reject) => {
-                fs.readFile(this.badWordsPath, { encoding: 'utf-8' }, (err, data) => {
+                fs.readFile(path, { encoding: 'utf-8' }, (err, data) => {
                     if (!err) {
                         resolve(data);
                     } else {
@@ -23,9 +25,14 @@ class WordFilter {
     }
 
     _loadBadWords() {
-        return this._getBadWords().then(data => {
+        this._getBadWords(this.badWordsPath).then(data => {
             const dataSanitized = data.replaceAll("\r\n", "\n");
             this.badWords = dataSanitized.split("\n");
+        })
+
+        this._getBadWords(this.badWordsExactPath).then(data => {
+            const dataSanitized = data.replaceAll("\r\n", "\n");
+            this.badWordsExact = dataSanitized.split("\n");
         })
     }
 
@@ -47,10 +54,20 @@ class WordFilter {
     }
 
     filter(message) {
-        let filteredMessage = message;
+        const splittedMessage = message.split(' ');
+
+        this.badWordsExact.forEach(badWordExact => {
+            splittedMessage.forEach((word, index) => {
+                if (word === badWordExact) {
+                    splittedMessage[index] = "*".repeat(word.length);
+                }
+            });
+        });
+
+        let filteredMessage = splittedMessage.join(' ');
 
         this.badWords.forEach(badWord => {
-            const wordPermutations = this._findWordPermutations(message, badWord);
+            const wordPermutations = this._findWordPermutations(filteredMessage, badWord);
 
             wordPermutations.forEach(
                 (permutation) => {
