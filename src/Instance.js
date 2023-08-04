@@ -125,6 +125,7 @@ class Instance {
 
     _getMessageRepresentation(msg, content) {
       let username;
+      let messageRepresentation = '';
 
       if (msg.member.nickname) {
         username = msg.member.nickname;
@@ -132,8 +133,11 @@ class Instance {
         username = msg.member.user.username;
       }
 
-      const messageRepresentation = 
-        `[${username}@${msg.guild.name}]: ${content}`;
+      if (msg.type === 'GUILD_MEMBER_JOIN') {
+        messageRepresentation = `L'utente ${username} si è unito al server ${msg.guild.name}`;
+      } else {
+        messageRepresentation =  `[${username}@${msg.guild.name}]: ${content}`;
+      }
 
       return messageRepresentation;
     }
